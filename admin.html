@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>מעקב הזמנות – אדמין</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page-wrap">
+    <main class="card admin-table-wrap">
+      <h1 class="main-title admin-title">מעקב אחרי הבחירות של קסניה</h1>
+      <p class="subtitle">כל מה שנשמר בשרת מופיע כאן</p>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>מטבח</th>
+            <th>מסעדה</th>
+            <th>שעת איסוף</th>
+            <th>תאריך</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-body">
+          <tr><td colspan="5">טוען...</td></tr>
+        </tbody>
+      </table>
+
+      <button type="button" class="confirm-btn refresh-btn" id="refresh-btn">רענון</button>
+    </main>
+  </div>
+
+  <script src="js/back-button.js"></script>
+  <script>
+    async function loadBookings() {
+      const tbody = document.getElementById('bookings-body');
+      try {
+        const res = await fetch('/api/bookings');
+        const list = await res.json();
+
+        if (!list.length) {
+          tbody.innerHTML = '<tr><td colspan="5">עדיין אין הזמנות</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = list.map(function (b, i) {
+          const date = new Date(b.createdAt).toLocaleString('he-IL');
+          return '<tr>' +
+            '<td>' + (i + 1) + '</td>' +
+            '<td>' + b.cuisine + '</td>' +
+            '<td>' + b.restaurant + '</td>' +
+            '<td>' + b.pickupTime + '</td>' +
+            '<td>' + date + '</td>' +
+            '</tr>';
+        }).join('');
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="5">הפעל את השרת: npm start</td></tr>';
+      }
+    }
+
+    document.getElementById('refresh-btn').addEventListener('click', loadBookings);
+    loadBookings();
+  </script>
+</body>
+</html>

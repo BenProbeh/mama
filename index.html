@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="color-scheme" content="light">
+  <title>הדייט השבועי שלנו</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="flower-rain" class="emoji-rain flower-rain" aria-hidden="true"></div>
+
+  <div class="page-wrap">
+    <main class="card">
+      <h1 class="main-title">הדייט השבועי שלנו</h1>
+      <p class="subtitle">
+        ברוכה הבאה קסניה בדנין היקרה,<br>
+        תבחרי איזה סוג מטבח הדייט שלנו יתבסס עליו.
+      </p>
+
+      <div class="cuisine-buttons">
+        <!-- כפתור איטלקי: אודיו + מעבר לדף -->
+        <button type="button" class="cuisine-btn btn-italian" id="btn-italian"
+          onclick="goWithAudio('italian', 'italian.html');">
+          <span class="btn-label">
+            <span class="btn-text">איטלקי</span>
+            <span class="btn-flag" aria-hidden="true">🇮🇹</span>
+          </span>
+        </button>
+
+        <!-- כפתור המבורגר: אודיו + מעבר לדף -->
+        <button type="button" class="cuisine-btn btn-burger" id="btn-burger"
+          onclick="goWithAudio('burger', 'burger.html');">
+          <span class="btn-label">
+            <span class="btn-text">המבורגר</span>
+            <span class="btn-flag" aria-hidden="true">🇺🇸</span>
+          </span>
+        </button>
+
+        <!-- כפתור אסייתי: אודיו + מעבר לדף -->
+        <button type="button" class="cuisine-btn btn-asian" id="btn-asian"
+          onclick="goWithAudio('asian', 'asian.html');">
+          <span class="btn-label">
+            <span class="btn-text">אסייתי</span>
+            <span class="btn-flag" aria-hidden="true">🇯🇵</span>
+          </span>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ▼▼▼ אלמנט האודיו – מופעל ע"י playCuisineAudio ב-js/audio-config.js ▼▼▼ -->
+  <audio id="cuisine-audio" class="hidden-audio" preload="auto" playsinline></audio>
+
+  <script src="js/emoji-rain.js"></script>
+  <script src="js/click-burst.js"></script>
+  <script src="js/audio-config.js"></script>
+  <script>startFlowerRain('flower-rain', 32);</script>
+</body>
+</html>

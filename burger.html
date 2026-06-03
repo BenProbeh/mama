@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Welcome – המבורגר</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="flower-rain" class="emoji-rain flower-rain" aria-hidden="true"></div>
+  <div id="emoji-rain" class="emoji-rain" aria-hidden="true"></div>
+
+  <div class="page-wrap">
+    <main class="card">
+      <h1 class="page-title-burger-en">Welcome motherfucker it's a good choice</h1>
+      <p class="subtitle">המסעדות בורגר לבחירה הן:</p>
+
+      <ul class="restaurant-list">
+        <li>
+          <button type="button" class="restaurant-btn" data-name="Hamburger Gourmet">
+            <span>Hamburger Gourmet</span>
+            <span class="rating">⭐ 4.4</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="restaurant-btn" data-name="Port 19">
+            <span>Port 19</span>
+            <span class="rating">⭐ 4.4</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="restaurant-btn" data-name="Gango Burger">
+            <span>Gango Burger</span>
+            <span class="rating">⭐ 4.4</span>
+          </button>
+        </li>
+      </ul>
+    </main>
+  </div>
+
+  <audio id="cuisine-audio" class="hidden-audio" preload="auto" playsinline></audio>
+
+  <script src="js/audio-config.js"></script>
+  <script src="js/emoji-rain.js"></script>
+  <script src="js/click-burst.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/back-button.js"></script>
+  <script>
+    resumeCuisineAudio('burger');
+    startFlowerRain('flower-rain', 24);
+    startEmojiRain('emoji-rain', ['🍔', '🍔', '🍟', '🍔', '🧀'], 35);
+
+    document.querySelectorAll('.restaurant-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        saveRestaurant('המבורגר', btn.dataset.name);
+        window.location.href = 'time.html';
+      });
+    });
+  </script>
+</body>
+</html>
