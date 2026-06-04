@@ -12,8 +12,7 @@
   <div class="page-wrap">
     <main class="card admin-table-wrap">
       <h1 class="main-title admin-title">מעקב אחרי הבחירות של קסניה</h1>
-      <p class="subtitle">נתונים מהאתר באוויר (מובייל + מחשב)</p>
-      <p class="subtitle admin-hint" id="admin-hint" hidden></p>
+      <p class="subtitle admin-hint" id="admin-hint"></p>
 
       <table class="admin-table">
         <thead>
@@ -30,49 +29,61 @@
         </tbody>
       </table>
 
-      <p class="subtitle" id="storage-status">בודק חיבור...</p>
+      <p class="subtitle" id="storage-status"></p>
       <button type="button" class="confirm-btn refresh-btn" id="refresh-btn">רענון</button>
     </main>
   </div>
 
-  <script src="js/supabase-config.js"></script>
-  <script src="js/supabase-db.js"></script>
+  <script src="js/storage-config.js"></script>
+  <script src="js/storage-save.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/back-button.js"></script>
   <script>
-    function updateStorageStatus(count) {
-      const el = document.getElementById('storage-status');
-      if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
-        el.textContent = 'שמירה פעילה (Supabase) · ' + count + ' הזמנות';
-        el.style.color = '#2e7d32';
+    function showSetupMessage() {
+      const hint = document.getElementById('admin-hint');
+      const tbody = document.getElementById('bookings-body');
+      const status = document.getElementById('storage-status');
+
+      if (isFormspreeConfigured()) {
+        hint.innerHTML =
+          '✉️ <strong>Formspree פעיל</strong> – כל בחירה נשלחת למייל שלך. ' +
+          '<a href="https://formspree.io/forms" target="_blank" rel="noopener">פתח Formspree</a>';
+        hint.style.color = '#2e7d32';
+        tbody.innerHTML = '<tr><td colspan="5">ההזמנות במייל / בלוח Formspree</td></tr>';
+        status.textContent = 'לטבלה מלאה באתר – הגדר Supabase (SETUP-SUPABASE.md)';
+        status.style.color = '#666';
         return;
       }
-      el.textContent = 'Supabase לא מוגדר – פתח SETUP-SUPABASE.md והדבק מפתחות ב-js/supabase-config.js';
-      el.style.color = '#b42318';
+
+      hint.innerHTML =
+        '⚠️ אין שמירה! <strong>פתרון מהיר:</strong> formspree.io → New Form → הדבק ID ב-<code>js/storage-config.js</code> → git push. ' +
+        '<br>ראה <strong>SETUP-STORAGE.md</strong>';
+      hint.style.color = '#b42318';
+      tbody.innerHTML = '<tr><td colspan="5">ממתין להגדרה</td></tr>';
+      status.textContent = '';
     }
 
     async function loadBookings() {
       const tbody = document.getElementById('bookings-body');
       const hint = document.getElementById('admin-hint');
+      const status = document.getElementById('storage-status');
 
       if (!isSupabaseConfigured()) {
-        hint.hidden = false;
-        hint.innerHTML =
-          'כדי לראות נתונים: צור חשבון חינם ב-<a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>, ' +
-          'הרץ את ה-SQL מ-<strong>SETUP-SUPABASE.md</strong>, והדבק URL + anon key ב-<strong>js/supabase-config.js</strong> → git push.';
-        tbody.innerHTML = '<tr><td colspan="5">ממתין להגדרת Supabase</td></tr>';
-        updateStorageStatus(0);
+        showSetupMessage();
         return;
       }
 
-      hint.hidden = true;
+      hint.hidden = false;
+      hint.textContent = '';
+      hint.style.color = '';
 
       try {
         const list = await loadAllBookings();
-        updateStorageStatus(list.length);
+        status.textContent = 'Supabase פעיל · ' + list.length + ' הזמנות';
+        status.style.color = '#2e7d32';
 
         if (!list.length) {
-          tbody.innerHTML = '<tr><td colspan="5">עדיין אין הזמנות – שלחי לקסניה את הקישור</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5">עדיין אין הזמנות</td></tr>';
           return;
         }
 
@@ -87,10 +98,9 @@
             '</tr>';
         }).join('');
       } catch (e) {
-        hint.hidden = false;
-        hint.textContent = 'שגיאה: ' + (e.message || e) + ' – בדוק שהטבלה bookings נוצרה ב-Supabase';
-        tbody.innerHTML = '<tr><td colspan="5">שגיאת טעינה</td></tr>';
-        updateStorageStatus(0);
+        hint.textContent = 'שגיאה: ' + (e.message || e);
+        hint.style.color = '#b42318';
+        tbody.innerHTML = '<tr><td colspan="5">שגיאה</td></tr>';
       }
     }
 

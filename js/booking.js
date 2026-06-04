@@ -23,54 +23,16 @@ function savePickupTime(time) {
   return saveBooking({ pickupTime: time });
 }
 
-async function saveViaApi(data) {
-  const response = await fetch('/api/booking', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      cuisine: data.cuisine,
-      restaurant: data.restaurant,
-      pickupTime: data.pickupTime,
-      createdAt: new Date().toISOString()
-    })
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(function () { return {}; });
-    throw new Error(err.error || 'שגיאה בשמירה לשרת');
-  }
-  return response.json();
-}
-
 async function sendBookingToServer() {
   const data = getBooking();
   if (!data.cuisine || !data.restaurant || !data.pickupTime) {
     throw new Error('חסרים נתונים לשמירה');
   }
 
-  const payload = {
+  return saveBookingToCloud({
     cuisine: data.cuisine,
     restaurant: data.restaurant,
     pickupTime: data.pickupTime,
     createdAt: new Date().toISOString()
-  };
-
-  if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
-    return saveBookingToSupabase(payload);
-  }
-
-  return saveViaApi(payload);
-}
-
-async function loadAllBookings() {
-  if (typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
-    return loadBookingsFromSupabase();
-  }
-
-  const res = await fetch('/api/bookings');
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.error || 'שגיאה בטעינה');
-  }
-  return Array.isArray(data) ? data : [];
+  });
 }
