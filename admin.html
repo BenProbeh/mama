@@ -30,41 +30,34 @@
       </table>
 
       <p class="subtitle" id="storage-status"></p>
+      <a href="connect.html" class="confirm-btn" style="display:inline-block;text-decoration:none;margin:0.25rem;">חיבור שמירה</a>
       <button type="button" class="confirm-btn refresh-btn" id="refresh-btn">רענון</button>
     </main>
   </div>
 
-  <script src="js/storage-config.js?v=4"></script>
-  <script src="js/storage-save.js?v=4"></script>
-  <script src="js/booking.js?v=4"></script>
+  <script src="js/storage-config.js?v=6"></script>
+  <script src="js/storage-save.js?v=6"></script>
+  <script src="js/booking.js?v=6"></script>
   <script src="js/back-button.js"></script>
   <script>
-    function showSetup() {
-      document.getElementById('admin-hint').innerHTML =
-        'הדבק מפתחות Upstash ב-<strong>js/storage-config.js</strong> → ראה <strong>SETUP-UPSTASH.md</strong>';
-      document.getElementById('admin-hint').style.color = '#b42318';
-      document.getElementById('bookings-body').innerHTML =
-        '<tr><td colspan="5">ממתין להגדרה</td></tr>';
-      document.getElementById('storage-status').textContent = '';
-    }
-
     async function loadBookings() {
       const tbody = document.getElementById('bookings-body');
       const hint = document.getElementById('admin-hint');
       const status = document.getElementById('storage-status');
 
       if (!hasAnyStorage()) {
-        showSetup();
+        hint.innerHTML = 'אין שמירה באוויר. <a href="connect.html">חיבור חינמי (3 דק)</a>';
+        hint.style.color = '#b42318';
+        tbody.innerHTML = '<tr><td colspan="5">הדבק מפתחות ב-storage-config.js</td></tr>';
+        status.textContent = 'עובד רק עם npm start במחשב עד שמגדירים שמירה';
+        status.style.color = '#b42318';
         return;
       }
 
-      hint.textContent = '';
-      hint.style.color = '';
-
       try {
         const list = await loadAllBookings();
-        const via = isUpstashConfigured() ? 'Upstash' : 'Supabase';
-        status.textContent = via + ' פעיל · ' + list.length + ' הזמנות';
+        hint.textContent = '';
+        status.textContent = getActiveStorageName() + ' · ' + list.length + ' הזמנות';
         status.style.color = '#2e7d32';
 
         if (!list.length) {
@@ -83,9 +76,12 @@
             '</tr>';
         }).join('');
       } catch (e) {
-        hint.textContent = 'שגיאה: ' + (e.message || e);
+        hint.innerHTML =
+          'אין שמירה עדיין. <a href="connect.html">לחץ כאן לחיבור (3 דקות)</a>';
         hint.style.color = '#b42318';
-        tbody.innerHTML = '<tr><td colspan="5">שגיאה</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5">אין נתונים</td></tr>';
+        status.textContent = (e.message || e);
+        status.style.color = '#b42318';
       }
     }
 

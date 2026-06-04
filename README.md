@@ -3,11 +3,11 @@
 **אתר:** https://mama-7gwi.vercel.app/  
 **אדמין:** https://mama-7gwi.vercel.app/admin.html
 
-## שמירת נתונים – חובה פעם אחת
+## שמירה באוויר (חינם, בלי Redis בתשלום)
 
-1. עקוב אחרי **SETUP-UPSTASH.md** (2 דקות, חינם)
-2. הדבק 2 מפתחות ב-**`js/storage-config.js`**
-3. הרץ פקודות מ-**`GIT-PUSH.md`**
+1. פתח **setup.html** או **SETUP-JSONBIN.md** (הכי מהיר)
+2. הדבק מפתחות ב-**`js/storage-config.js`**
+3. **GIT-PUSH.md**
 
 ## מקומי
 

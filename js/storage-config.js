@@ -1,45 +1,65 @@
 /**
- * ═══════════════════════════════════════════════════════════════
- *  ★ הקובץ היחיד לעריכה
- *  הדבק את 2 המפתחות מ-Upstash (חינם, 2 דקות)
- *  הוראות: SETUP-UPSTASH.md
- * ═══════════════════════════════════════════════════════════════
+ * ★ הקובץ היחיד לעריכה – שמירה חינמית (עובד ממובייל + Vercel)
+ * בחר אחת מהאפשרויות למטה והדבק מפתחות. ראה setup.html
  */
 
-// ▼▼▼ Upstash Redis – מ-Upstash Console → Database → REST API ▼▼▼
-const UPSTASH_REDIS_REST_URL = '';
-const UPSTASH_REDIS_REST_TOKEN = '';
-
-// גיבוי: Formspree (מייל) – אופציונלי
-const FORMSPREE_ID = '';
-
-// גיבוי: Supabase (טבלה ב-admin) – אופציונלי
+// ── אופציה 1: Supabase (חינם) – SETUP-SUPABASE.md ──
 const SUPABASE_URL = '';
 const SUPABASE_ANON_KEY = '';
 
+// ── אופציה 2: JSONBin (חינם, הכי מהיר) – SETUP-JSONBIN.md ──
+const JSONBIN_BIN_ID = '';
+const JSONBIN_API_KEY = '';
+
+// ── אופציה 3: Google Sheet (חינם) – SETUP-GOOGLE.md ──
 const GOOGLE_SCRIPT_URL = '';
 
-function isUpstashConfigured() {
-  return !!(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
-}
+// ── אופציה 4: Upstash (לא חובה) ──
+const UPSTASH_REDIS_REST_URL = '';
+const UPSTASH_REDIS_REST_TOKEN = '';
+
+// ── גיבוי: Formspree (מייל בלבד) ──
+const FORMSPREE_ID = '';
 
 function isSupabaseConfigured() {
-  return !!(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.indexOf('supabase.co') > -1);
+  return !!(
+    SUPABASE_URL &&
+    SUPABASE_ANON_KEY &&
+    SUPABASE_URL.indexOf('supabase.co') > -1
+  );
 }
 
-function isFormspreeConfigured() {
-  return !!(FORMSPREE_ID && FORMSPREE_ID.length > 5 && FORMSPREE_ID !== 'myzqabcd');
+function isJsonBinConfigured() {
+  return !!(JSONBIN_BIN_ID && JSONBIN_API_KEY && JSONBIN_BIN_ID.length > 8);
 }
 
 function isGoogleScriptConfigured() {
   return !!(GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.indexOf('script.google.com') > -1);
 }
 
+function isUpstashConfigured() {
+  return !!(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
+}
+
+function isFormspreeConfigured() {
+  return !!(FORMSPREE_ID && FORMSPREE_ID.length > 5 && FORMSPREE_ID !== 'myzqabcd');
+}
+
 function hasAnyStorage() {
   return (
-    isUpstashConfigured() ||
     isSupabaseConfigured() ||
-    isFormspreeConfigured() ||
-    isGoogleScriptConfigured()
+    isJsonBinConfigured() ||
+    isGoogleScriptConfigured() ||
+    isUpstashConfigured() ||
+    isFormspreeConfigured()
   );
+}
+
+function getActiveStorageName() {
+  if (isSupabaseConfigured()) return 'Supabase';
+  if (isJsonBinConfigured()) return 'JSONBin';
+  if (isGoogleScriptConfigured()) return 'Google Sheets';
+  if (isUpstashConfigured()) return 'Upstash';
+  if (isFormspreeConfigured()) return 'Formspree (מייל)';
+  return 'מקומי (npm start)';
 }

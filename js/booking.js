@@ -26,13 +26,15 @@ function savePickupTime(time) {
 async function sendBookingToServer() {
   const data = getBooking();
   if (!data.cuisine || !data.restaurant || !data.pickupTime) {
-    throw new Error('חסרים נתונים לשמירה');
+    throw new Error('Missing booking data');
   }
 
-  return saveBookingToCloud({
+  const payload = {
     cuisine: data.cuisine,
     restaurant: data.restaurant,
     pickupTime: data.pickupTime,
     createdAt: new Date().toISOString()
-  });
+  };
+
+  return saveBookingToCloud(payload);
 }

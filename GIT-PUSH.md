@@ -1,6 +1,4 @@
-# Git commands (copy & paste)
-
-After you paste Upstash keys in `js/storage-config.js` and save (Ctrl+S):
+# IMPORTANT – run these now (site is old until you push)
 
 ```powershell
 cd "c:\Users\Probeh\OneDrive\Desktop\lll"
@@ -11,11 +9,11 @@ git add .
 ```
 
 ```powershell
-git commit -m "Add Upstash Redis storage for mobile and admin"
+git commit -m "Free JSONBin storage via Vercel API and connect page"
 ```
 
 ```powershell
 git push
 ```
 
-Wait 2 minutes, then test: https://mama-7gwi.vercel.app/
+Then open **connect.html** on the site and add JSONBin keys in Vercel → Redeploy.

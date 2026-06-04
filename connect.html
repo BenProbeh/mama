@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>חיבור שמירה – 3 דקות</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .connect-input { width: 100%; max-width: 100%; padding: 0.65rem; margin: 0.35rem 0 0.75rem; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; box-sizing: border-box; }
+    .connect-steps { text-align: right; line-height: 1.85; }
+    .connect-code { background: #f4f0ff; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; word-break: break-all; text-align: left; direction: ltr; }
+    #copy-btn { margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <main class="card">
+      <h1 class="main-title">חיבור שמירה (חינם)</h1>
+      <p class="subtitle connect-steps">
+        <strong>שלב א – JSONBin (חינם)</strong><br>
+        1. <a href="https://jsonbin.io/login" target="_blank" rel="noopener">jsonbin.io</a> → התחברות<br>
+        2. API Keys → העתק <strong>X-Master-Key</strong><br>
+        3. Create Bin → תוכן: <code>[]</code> → העתק <strong>Bin ID</strong>
+      </p>
+
+      <label class="subtitle" for="bin-id"><strong>Bin ID</strong></label>
+      <input type="text" id="bin-id" class="connect-input" placeholder="674a1b2e..." autocomplete="off">
+
+      <label class="subtitle" for="api-key"><strong>X-Master-Key</strong></label>
+      <input type="text" id="api-key" class="connect-input" placeholder="המפתח הארוך" autocomplete="off">
+
+      <p class="subtitle connect-steps">
+        <strong>שלב ב – Vercel (בלי Redis בתשלום)</strong><br>
+        1. <a href="https://vercel.com" target="_blank" rel="noopener">vercel.com</a> → פרויקט <strong>mama</strong><br>
+        2. Settings → Environment Variables → הוסף:
+      </p>
+      <pre class="connect-code" id="env-preview">JSONBIN_BIN_ID=
+JSONBIN_API_KEY=</pre>
+      <button type="button" class="confirm-btn" id="copy-env">העתק ל-Vercel</button>
+
+      <p class="subtitle connect-steps" style="margin-top:1rem">
+        <strong>שלב ג – בקוד (אותו דבר)</strong><br>
+        הדבק גם ב-<code>js/storage-config.js</code> ואז git push
+      </p>
+      <pre class="connect-code" id="code-preview"></pre>
+      <button type="button" class="confirm-btn" id="copy-code">העתק לקוד</button>
+
+      <p class="subtitle" id="status" style="font-weight:700;margin-top:1rem"></p>
+      <p class="subtitle connect-steps">
+        3. Deployments → <strong>Redeploy</strong><br>
+        4. בדוק: <a href="/api/health">/api/health</a> → <code>ok: true</code>
+      </p>
+      <a href="admin.html" class="confirm-btn" style="display:inline-block;text-decoration:none;margin:0.35rem;">אדמין</a>
+      <a href="index.html" class="confirm-btn" style="display:inline-block;text-decoration:none;margin:0.35rem;">דף בית</a>
+    </main>
+  </div>
+  <script>
+    var binInput = document.getElementById('bin-id');
+    var keyInput = document.getElementById('api-key');
+    var envPre = document.getElementById('env-preview');
+    var codePre = document.getElementById('code-preview');
+    var statusEl = document.getElementById('status');
+
+    function updatePreview() {
+      var bin = binInput.value.trim();
+      var key = keyInput.value.trim();
+      envPre.textContent =
+        'JSONBIN_BIN_ID=' + bin + '\nJSONBIN_API_KEY=' + key;
+      codePre.textContent =
+        "const JSONBIN_BIN_ID = '" + bin + "';\nconst JSONBIN_API_KEY = '" + key + "';";
+      if (bin.length > 8 && key.length > 10) {
+        statusEl.textContent = 'מוכן – הדבק ב-Vercel ועשה Redeploy';
+        statusEl.style.color = '#2e7d32';
+      } else {
+        statusEl.textContent = 'מלא את שני השדות למעלה';
+        statusEl.style.color = '#b42318';
+      }
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(function () {
+        statusEl.textContent = 'הועתק ✓';
+        statusEl.style.color = '#2e7d32';
+      });
+    }
+
+    binInput.addEventListener('input', updatePreview);
+    keyInput.addEventListener('input', updatePreview);
+    document.getElementById('copy-env').addEventListener('click', function () {
+      copyText(envPre.textContent);
+    });
+    document.getElementById('copy-code').addEventListener('click', function () {
+      copyText(codePre.textContent);
+    });
+    updatePreview();
+
+    fetch('/api/health')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.storage && d.storage.ok) {
+          statusEl.textContent = '✅ השרת כבר מחובר (' + d.storage.type + ')';
+          statusEl.style.color = '#2e7d32';
+        }
+      })
+      .catch(function () {});
+  </script>
+</body>
+</html>

@@ -15,13 +15,13 @@
     <main class="card">
       <p class="final-message">נתראה ברביעי בערב תהיי מוכנה</p>
       <p class="final-time" id="display-time">--:--</p>
+      <p class="subtitle admin-hint" id="save-note" hidden></p>
       <div class="heart-deco">💜</div>
     </main>
   </div>
 
-  <script src="js/emoji-rain.js"></script>
-  <script src="js/click-burst.js"></script>
-  <script src="js/booking.js"></script>
+  <script src="js/emoji-rain.js?v=6"></script>
+  <script src="js/booking.js?v=6"></script>
   <script src="js/back-button.js"></script>
   <script>startFlowerRain('flower-rain', 32);</script>
   <script>
@@ -31,6 +31,11 @@
       el.textContent = booking.pickupTime;
     } else {
       el.textContent = 'לא נבחרה שעה';
+    }
+    if (sessionStorage.getItem('saveFailed')) {
+      document.getElementById('save-note').hidden = false;
+      document.getElementById('save-note').textContent =
+        'הבחירה לא נשמרה בשרת – בעל האתר: setup.html';
     }
   </script>
 </body>

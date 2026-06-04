@@ -22,11 +22,11 @@
     </main>
   </div>
 
-  <script src="js/emoji-rain.js?v=4"></script>
-  <script src="js/click-burst.js?v=4"></script>
-  <script src="js/storage-config.js?v=4"></script>
-  <script src="js/storage-save.js?v=4"></script>
-  <script src="js/booking.js?v=4"></script>
+  <script src="js/emoji-rain.js?v=6"></script>
+  <script src="js/click-burst.js?v=6"></script>
+  <script src="js/storage-config.js?v=6"></script>
+  <script src="js/storage-save.js?v=6"></script>
+  <script src="js/booking.js?v=6"></script>
   <script src="js/back-button.js"></script>
   <script>startFlowerRain('flower-rain', 32);</script>
   <script>
@@ -41,13 +41,13 @@
 
       try {
         await sendBookingToServer();
-        window.location.href = 'final.html';
+        sessionStorage.removeItem('saveFailed');
       } catch (e) {
-        alert(
-          'לא נשמר:\n' + (e.message || e) +
-          '\n\nהדבק מפתחות Upstash ב-js/storage-config.js\nראה SETUP-UPSTASH.md → git push'
-        );
+        sessionStorage.setItem('saveFailed', '1');
+        console.warn('Save failed:', e);
       }
+
+      window.location.href = 'final.html';
     });
   </script>
 </body>
