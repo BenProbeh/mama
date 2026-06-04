@@ -1,15 +1,15 @@
-# הגדרת שמירת נתונים ב-Vercel (5 דקות) – Supabase
+# הגדרה חד-פעמית – 5 דקות (עובד ממובייל + Vercel)
 
-בלי זה **שום בחירה לא נשמרת** באתר שבאוויר.
+האתר: **https://mama-7gwi.vercel.app/**
 
-## שלב 1 – חשבון Supabase (חינם)
+## שלב 1 – Supabase (חינם)
 
-1. היכנס ל-[supabase.com](https://supabase.com) → **Start your project**
-2. **New project** → שם + סיסמה → **Create**
+1. היכנס ל-[supabase.com](https://supabase.com) → **Start your project** → **New project**
+2. שם + סיסמה → **Create new project** (חכה דקה)
 
 ## שלב 2 – טבלה
 
-1. בתפריט: **SQL Editor** → **New query**
+1. **SQL Editor** → **New query**
 2. הדבק והרץ:
 
 ```sql
@@ -30,50 +30,45 @@ create policy "allow_public_insert" on bookings
   for insert with check (true);
 ```
 
-3. **Run**
+3. לחץ **Run** (חייב להצליח בלי שגיאה)
 
-## שלב 3 – מפתחות
+## שלב 3 – העתק מפתחות
 
-1. **Project Settings** (גלגל שיניים) → **API**
+1. **Project Settings** (⚙️) → **API**
 2. העתק:
-   - **Project URL** → זה `SUPABASE_URL`
-   - **anon public** key → זה `SUPABASE_ANON_KEY`
+   - **Project URL**
+   - **anon** **public** (לא את ה-service_role!)
 
-## שלב 4 – Vercel
+## שלב 4 – הדבק בפרויקט
 
-1. [vercel.com](https://vercel.com) → הפרויקט שלך
-2. **Settings** → **Environment Variables**
-3. הוסף:
+פתח **`js/supabase-config.js`** והדבק:
 
-| Name | Value |
-|------|--------|
-| `SUPABASE_URL` | ה-URL שהעתקת |
-| `SUPABASE_ANON_KEY` | ה-anon key |
+```javascript
+const SUPABASE_URL = 'https://xxxxx.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+```
 
-4. סמן **Production**, **Preview**, **Development** → **Save**
-5. **Deployments** → הפריסה האחרונה → **⋯** → **Redeploy**
-
-## שלב 5 – Git (אם עדיין לא העלית את הקוד החדש)
+## שלב 5 – העלה ל-Git
 
 ```bash
 cd "c:\Users\Probeh\OneDrive\Desktop\lll"
-git add .
-git commit -m "Add Supabase storage for bookings"
+git add js/supabase-config.js
+git commit -m "Add Supabase keys"
 git push
 ```
 
+Vercel יעדכן אוטומטית תוך ~1 דקה.
+
 ## בדיקה
 
-פתח: `https://האתר-שלך.vercel.app/api/health`
+1. **אדמין:** https://mama-7gwi.vercel.app/admin.html  
+   → שורה ירוקה "שמירה פעילה (Supabase)"
 
-אמור להופיע:
-```json
-"ok": true,
-"storage": { "ok": true, "type": "supabase" }
-```
-
-אחרי שמישהו ממלא את האתר: `https://האתר-שלך.vercel.app/admin.html`
+2. **ממובייל:** מלאי את האתר עד סוף (בחירת שעה)  
+3. **רענון אדמין** → הבחירה מופיעה
 
 ---
 
-**הערה:** הקובץ `data/bookings.json` במחשב **לא** מתעדכן מ-Vercel. הנתונים חיים ב-Supabase ובאדמין.
+**לא צריך** Environment Variables ב-Vercel – רק הקובץ `supabase-config.js`.
+
+**הקובץ `data/bookings.json` במחשב לא מתעדכן מהאתר באוויר.**

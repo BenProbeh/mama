@@ -1,35 +1,28 @@
 # הדייט השבועי שלנו 💜
 
-## הפעלה
+**אתר באוויר:** https://mama-7gwi.vercel.app/  
+**אדמין (נתונים):** https://mama-7gwi.vercel.app/admin.html
+
+## שמירת נתונים (חובה פעם אחת)
+
+עקוב אחרי **[SETUP-SUPABASE.md](SETUP-SUPABASE.md)** – 5 דקות.
+
+הדבק מפתחות ב-`js/supabase-config.js` → `git push`.
+
+## מקומי
 
 ```bash
 npm install
 npm start
 ```
 
-פתח בדפדפן: **http://localhost:3000**
+→ http://localhost:3000
 
-מעקב אחר בחירות: **http://localhost:3000/admin.html**
-
-## קבצי האודיו
-
-1. העתק 3 קבצי MP3 לתיקייה `audio/`
-2. בקובץ `js/audio-config.js` שורות 11–13 – כתוב את שמות הקבצים שלך
-
-## מבנה הפרויקט
+## מבנה
 
 | קובץ | תפקיד |
 |------|--------|
-| `index.html` | דף בית + 3 כפתורים + אודיו |
-| `italian.html` | מסעדות איטלקיות + גשם פיצות |
-| `burger.html` | מסעדות בורגר + גשם המבורגרים |
-| `asian.html` | מסעדות אסייתיות + גשם סמוראי |
-| `time.html` | בחירת שעת איסוף |
-| `final.html` | הודעת סיום + השעה |
-| `admin.html` | צפייה בכל מה שנשמר בשרת |
-| `css/style.css` | עיצוב מלא |
-| `js/audio-config.js` | **הגדרות אודיו** |
-| `js/booking.js` | שמירה בדפדפן + שליחה לשרת |
-| `js/emoji-rain.js` | אנימציית גשם אימוג'ים |
-| `server.js` | שרת Node – שומר ב-`data/bookings.json` |
-# mama
+| `js/supabase-config.js` | **מפתחות Supabase** |
+| `js/booking.js` | שמירת בחירות (מובייל + מחשב) |
+| `admin.html` | צפייה בכל ההזמנות |
+| `api/` | גיבוי לשרת (אופציונלי) |
