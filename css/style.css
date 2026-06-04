@@ -433,6 +433,12 @@ body::before {
   margin-bottom: 1.5rem;
 }
 
+.admin-hint {
+  color: #b42318;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
 .refresh-btn {
   margin-top: 1rem;
 }

@@ -19,6 +19,55 @@ function getCuisineAudio() {
   return document.getElementById('cuisine-audio');
 }
 
+/** iPhone / מובייל – Safari לא ממשיך אודיו אחרי מעבר דף */
+function isTouchDevice() {
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia('(pointer: coarse)').matches
+  );
+}
+
+/** פותח השמעה באייפון – במגע ראשון בדף הבית */
+function initAudioUnlock() {
+  const audio = getCuisineAudio();
+  if (!audio || window.__audioUnlocked) return;
+
+  function unlock() {
+    if (window.__audioUnlocked) return;
+    window.__audioUnlocked = true;
+    document.removeEventListener('touchstart', unlock, true);
+
+    const fileName = AUDIO_FILES.italian;
+    if (!fileName) return;
+
+    audio.src = AUDIO_BASE_PATH + fileName;
+    audio.currentTime = 0;
+    audio.play()
+      .then(function () {
+        audio.pause();
+        audio.currentTime = 0;
+      })
+      .catch(function () {});
+  }
+
+  document.addEventListener('touchstart', unlock, { once: true, capture: true, passive: true });
+}
+
+/**
+ * הפעלה מיידית בתוך לחיצה – חובה לאייפון
+ */
+function playInUserGesture(type, startAt) {
+  const fileName = AUDIO_FILES[type];
+  const audio = getCuisineAudio();
+  if (!fileName || !audio) return Promise.reject();
+
+  const offset = typeof startAt === 'number' ? startAt : 0;
+  audio.src = AUDIO_BASE_PATH + fileName;
+  audio.currentTime = offset;
+  return audio.play();
+}
+
 function playCuisineAudio(type, startAt) {
   const fileName = AUDIO_FILES[type];
   if (!fileName) return;
@@ -38,7 +87,7 @@ function playCuisineAudio(type, startAt) {
       audio.currentTime = offset;
     }
     audio.play().catch(function () {
-      console.log('הדפדפן חסם השמעה – נסי ללחוץ שוב');
+      console.log('הדפדפן חסם השמעה');
     });
   }
 
@@ -49,24 +98,56 @@ function playCuisineAudio(type, startAt) {
 }
 
 /**
- * לחיצה בדף הבית: מעבר מיידי + המשך השיר בדף הבא מהשנייה הנכונה
+ * לחיצה על כפתור בדף הבית
+ * מובייל: השמעה מלאה בדף הבית (בתוך הלחיצה) ואז מעבר
+ * מחשב: מעבר מיידי + המשך בדף המטבח
  */
-function goWithAudio(type, url) {
+function goWithAudio(ev, type, url) {
+  if (ev && ev.preventDefault) ev.preventDefault();
+
+  if (isTouchDevice()) {
+    sessionStorage.removeItem(AUDIO_PLAY_KEY);
+
+    const audio = getCuisineAudio();
+    if (!audio) {
+      window.location.href = url;
+      return;
+    }
+
+    let left = false;
+    function goNext() {
+      if (left) return;
+      left = true;
+      window.location.href = url;
+    }
+
+    audio.addEventListener('ended', goNext, { once: true });
+    audio.addEventListener('error', goNext, { once: true });
+
+    playInUserGesture(type, 0)
+      .catch(function () {
+        playCuisineAudio(type, 0);
+        setTimeout(goNext, 800);
+      });
+
+    return;
+  }
+
   sessionStorage.setItem(
     AUDIO_PLAY_KEY,
     JSON.stringify({ type: type, startedAt: Date.now() })
   );
 
   playCuisineAudio(type, 0);
-
   window.location.href = url;
 }
 
 /**
- * בדף המטבח – ממשיך את השיר מהמקום שבו נעצר בדף הבית
- * @param {'italian'|'burger'|'asian'} pageType
+ * מחשב בלבד – המשך אודיו בדף המטבח
  */
 function resumeCuisineAudio(pageType) {
+  if (isTouchDevice()) return;
+
   const raw = sessionStorage.getItem(AUDIO_PLAY_KEY);
   if (!raw) return;
 
@@ -81,4 +162,12 @@ function resumeCuisineAudio(pageType) {
 
   const elapsed = Math.max(0, (Date.now() - data.startedAt) / 1000);
   playCuisineAudio(pageType, elapsed);
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAudioUnlock);
+  } else {
+    initAudioUnlock();
+  }
 }

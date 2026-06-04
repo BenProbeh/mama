@@ -1,28 +1,16 @@
 # הדייט השבועי שלנו 💜
 
-**אתר באוויר:** https://mama-7gwi.vercel.app/  
-**אדמין (נתונים):** https://mama-7gwi.vercel.app/admin.html
+**אתר:** https://mama-7gwi.vercel.app/  
+**אדמין:** https://mama-7gwi.vercel.app/admin.html
 
-## שמירת נתונים (חובה פעם אחת)
+## שמירת נתונים – חובה פעם אחת
 
-עקוב אחרי **[SETUP-SUPABASE.md](SETUP-SUPABASE.md)** – 5 דקות.
-
-הדבק מפתחות ב-`js/supabase-config.js` → `git push`.
+1. עקוב אחרי **SETUP-UPSTASH.md** (2 דקות, חינם)
+2. הדבק 2 מפתחות ב-**`js/storage-config.js`**
+3. הרץ פקודות מ-**`GIT-PUSH.md`**
 
 ## מקומי
 
 ```bash
-npm install
 npm start
 ```
-
-→ http://localhost:3000
-
-## מבנה
-
-| קובץ | תפקיד |
-|------|--------|
-| `js/supabase-config.js` | **מפתחות Supabase** |
-| `js/booking.js` | שמירת בחירות (מובייל + מחשב) |
-| `admin.html` | צפייה בכל ההזמנות |
-| `api/` | גיבוי לשרת (אופציונלי) |

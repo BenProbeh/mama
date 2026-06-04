@@ -22,11 +22,11 @@
     </main>
   </div>
 
-  <script src="js/emoji-rain.js"></script>
-  <script src="js/click-burst.js"></script>
-  <script src="js/storage-config.js"></script>
-  <script src="js/storage-save.js"></script>
-  <script src="js/booking.js"></script>
+  <script src="js/emoji-rain.js?v=4"></script>
+  <script src="js/click-burst.js?v=4"></script>
+  <script src="js/storage-config.js?v=4"></script>
+  <script src="js/storage-save.js?v=4"></script>
+  <script src="js/booking.js?v=4"></script>
   <script src="js/back-button.js"></script>
   <script>startFlowerRain('flower-rain', 32);</script>
   <script>
@@ -44,12 +44,8 @@
         window.location.href = 'final.html';
       } catch (e) {
         alert(
-          'השמירה לא הוגדרה עדיין.\n\n' +
-          'פתרון מהיר (2 דקות):\n' +
-          '1. formspree.io → New Form\n' +
-          '2. הדבק את ה-ID ב-js/storage-config.js\n' +
-          '3. git push\n\n' +
-          'פרטים: SETUP-STORAGE.md'
+          'לא נשמר:\n' + (e.message || e) +
+          '\n\nהדבק מפתחות Upstash ב-js/storage-config.js\nראה SETUP-UPSTASH.md → git push'
         );
       }
     });

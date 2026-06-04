@@ -34,33 +34,18 @@
     </main>
   </div>
 
-  <script src="js/storage-config.js"></script>
-  <script src="js/storage-save.js"></script>
-  <script src="js/booking.js"></script>
+  <script src="js/storage-config.js?v=4"></script>
+  <script src="js/storage-save.js?v=4"></script>
+  <script src="js/booking.js?v=4"></script>
   <script src="js/back-button.js"></script>
   <script>
-    function showSetupMessage() {
-      const hint = document.getElementById('admin-hint');
-      const tbody = document.getElementById('bookings-body');
-      const status = document.getElementById('storage-status');
-
-      if (isFormspreeConfigured()) {
-        hint.innerHTML =
-          '✉️ <strong>Formspree פעיל</strong> – כל בחירה נשלחת למייל שלך. ' +
-          '<a href="https://formspree.io/forms" target="_blank" rel="noopener">פתח Formspree</a>';
-        hint.style.color = '#2e7d32';
-        tbody.innerHTML = '<tr><td colspan="5">ההזמנות במייל / בלוח Formspree</td></tr>';
-        status.textContent = 'לטבלה מלאה באתר – הגדר Supabase (SETUP-SUPABASE.md)';
-        status.style.color = '#666';
-        return;
-      }
-
-      hint.innerHTML =
-        '⚠️ אין שמירה! <strong>פתרון מהיר:</strong> formspree.io → New Form → הדבק ID ב-<code>js/storage-config.js</code> → git push. ' +
-        '<br>ראה <strong>SETUP-STORAGE.md</strong>';
-      hint.style.color = '#b42318';
-      tbody.innerHTML = '<tr><td colspan="5">ממתין להגדרה</td></tr>';
-      status.textContent = '';
+    function showSetup() {
+      document.getElementById('admin-hint').innerHTML =
+        'הדבק מפתחות Upstash ב-<strong>js/storage-config.js</strong> → ראה <strong>SETUP-UPSTASH.md</strong>';
+      document.getElementById('admin-hint').style.color = '#b42318';
+      document.getElementById('bookings-body').innerHTML =
+        '<tr><td colspan="5">ממתין להגדרה</td></tr>';
+      document.getElementById('storage-status').textContent = '';
     }
 
     async function loadBookings() {
@@ -68,18 +53,18 @@
       const hint = document.getElementById('admin-hint');
       const status = document.getElementById('storage-status');
 
-      if (!isSupabaseConfigured()) {
-        showSetupMessage();
+      if (!hasAnyStorage()) {
+        showSetup();
         return;
       }
 
-      hint.hidden = false;
       hint.textContent = '';
       hint.style.color = '';
 
       try {
         const list = await loadAllBookings();
-        status.textContent = 'Supabase פעיל · ' + list.length + ' הזמנות';
+        const via = isUpstashConfigured() ? 'Upstash' : 'Supabase';
+        status.textContent = via + ' פעיל · ' + list.length + ' הזמנות';
         status.style.color = '#2e7d32';
 
         if (!list.length) {

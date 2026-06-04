@@ -11,6 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preload" href="mamma-mia_C2DrtQA.mp3" as="audio">
+  <link rel="preload" href="hamburger-cheeseburger-bigmac-whopper.mp3" as="audio">
+  <link rel="preload" href="1080p-kaguya-sama-wk-03_trim1-online-audio-converter.mp3" as="audio">
 </head>
 <body>
   <div id="flower-rain" class="emoji-rain flower-rain" aria-hidden="true"></div>
@@ -26,7 +29,7 @@
       <div class="cuisine-buttons">
         <!-- כפתור איטלקי: אודיו + מעבר לדף -->
         <button type="button" class="cuisine-btn btn-italian" id="btn-italian"
-          onclick="goWithAudio('italian', 'italian.html');">
+          onclick="goWithAudio(event, 'italian', 'italian.html');">
           <span class="btn-label">
             <span class="btn-text">איטלקי</span>
             <span class="btn-flag" aria-hidden="true">🇮🇹</span>
@@ -35,7 +38,7 @@
 
         <!-- כפתור המבורגר: אודיו + מעבר לדף -->
         <button type="button" class="cuisine-btn btn-burger" id="btn-burger"
-          onclick="goWithAudio('burger', 'burger.html');">
+          onclick="goWithAudio(event, 'burger', 'burger.html');">
           <span class="btn-label">
             <span class="btn-text">המבורגר</span>
             <span class="btn-flag" aria-hidden="true">🇺🇸</span>
@@ -44,7 +47,7 @@
 
         <!-- כפתור אסייתי: אודיו + מעבר לדף -->
         <button type="button" class="cuisine-btn btn-asian" id="btn-asian"
-          onclick="goWithAudio('asian', 'asian.html');">
+          onclick="goWithAudio(event, 'asian', 'asian.html');">
           <span class="btn-label">
             <span class="btn-text">אסייתי</span>
             <span class="btn-flag" aria-hidden="true">🇯🇵</span>
@@ -55,7 +58,7 @@
   </div>
 
   <!-- ▼▼▼ אלמנט האודיו – מופעל ע"י playCuisineAudio ב-js/audio-config.js ▼▼▼ -->
-  <audio id="cuisine-audio" class="hidden-audio" preload="auto" playsinline></audio>
+  <audio id="cuisine-audio" class="hidden-audio" preload="auto" playsinline webkit-playsinline></audio>
 
   <script src="js/emoji-rain.js"></script>
   <script src="js/click-burst.js"></script>

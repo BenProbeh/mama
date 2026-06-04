@@ -1,3 +1,52 @@
+const BOOKINGS_KEY = 'kasenia:bookings';
+
+async function upstashCommand(command, ...args) {
+  const res = await fetch(UPSTASH_REDIS_REST_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + UPSTASH_REDIS_REST_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify([command, ...args])
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error('Upstash: ' + text);
+  }
+
+  return res.json();
+}
+
+async function saveBookingToUpstash(data) {
+  const entry = {
+    id: Date.now(),
+    cuisine: data.cuisine,
+    restaurant: data.restaurant,
+    pickupTime: data.pickupTime,
+    createdAt: data.createdAt || new Date().toISOString()
+  };
+
+  await upstashCommand('RPUSH', BOOKINGS_KEY, JSON.stringify(entry));
+  return { ok: true, via: 'upstash', booking: entry };
+}
+
+async function loadBookingsFromUpstash() {
+  const result = await upstashCommand('LRANGE', BOOKINGS_KEY, 0, -1);
+  const list = result.result || [];
+
+  return list
+    .map(function (item) {
+      try {
+        return typeof item === 'string' ? JSON.parse(item) : item;
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
+    .reverse();
+}
+
 async function saveBookingToSupabase(data) {
   const base = SUPABASE_URL.replace(/\/$/, '');
   const entry = {
@@ -39,7 +88,12 @@ async function saveBookingToFormspree(data) {
     })
   });
 
-  if (!res.ok) throw new Error('Formspree error');
+  if (!res.ok) {
+    if (res.status === 404) {
+      throw new Error('Formspree ID is wrong – use real ID from formspree.io');
+    }
+    throw new Error('Formspree error ' + res.status);
+  }
   return { ok: true, via: 'formspree' };
 }
 
@@ -56,11 +110,14 @@ async function saveBookingToGoogleScript(data) {
 }
 
 async function saveBookingToCloud(data) {
-  if (isSupabaseConfigured()) {
-    return saveBookingToSupabase(data);
+  if (isUpstashConfigured()) {
+    return saveBookingToUpstash(data);
   }
   if (isFormspreeConfigured()) {
     return saveBookingToFormspree(data);
+  }
+  if (isSupabaseConfigured()) {
+    return saveBookingToSupabase(data);
   }
   if (isGoogleScriptConfigured()) {
     return saveBookingToGoogleScript(data);
@@ -79,7 +136,7 @@ async function saveBookingToCloud(data) {
 
   if (!response.ok) {
     const err = await response.json().catch(function () { return {}; });
-    throw new Error(err.error || 'אין שמירה מוגדרת');
+    throw new Error(err.error || 'No storage configured – see SETUP-UPSTASH.md');
   }
   return { ok: true, via: 'api' };
 }
@@ -110,8 +167,11 @@ async function loadBookingsFromSupabase() {
 }
 
 async function loadAllBookings() {
+  if (isUpstashConfigured()) {
+    return loadBookingsFromUpstash();
+  }
   if (isSupabaseConfigured()) {
     return loadBookingsFromSupabase();
   }
-  throw new Error('טעינה לאדמין דורשת Supabase – Formspree שולח מייל על כל בחירה');
+  throw new Error('Admin table needs Upstash or Supabase – see SETUP-UPSTASH.md');
 }

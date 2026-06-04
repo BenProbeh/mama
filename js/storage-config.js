@@ -1,27 +1,34 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  בחר אחת מהאפשרויות (הכי מהיר: Formspree – 2 דקות)
- *  הוראות: SETUP-STORAGE.md
+ *  ★ הקובץ היחיד לעריכה
+ *  הדבק את 2 המפתחות מ-Upstash (חינם, 2 דקות)
+ *  הוראות: SETUP-UPSTASH.md
  * ═══════════════════════════════════════════════════════════════
  */
 
-// אפשרות 1 – Supabase (מומלץ לאדמין באתר)
+// ▼▼▼ Upstash Redis – מ-Upstash Console → Database → REST API ▼▼▼
+const UPSTASH_REDIS_REST_URL = '';
+const UPSTASH_REDIS_REST_TOKEN = '';
+
+// גיבוי: Formspree (מייל) – אופציונלי
+const FORMSPREE_ID = '';
+
+// גיבוי: Supabase (טבלה ב-admin) – אופציונלי
 const SUPABASE_URL = '';
 const SUPABASE_ANON_KEY = '';
 
-// אפשרות 2 – Formspree (מהיר: מקבל מייל על כל בחירה)
-// https://formspree.io → New Form → העתק את ה-ID מהכתובת f/xxxxxxxx
-const FORMSPREE_ID = 'myzqabcd';
-
-// אפשרות 3 – Google Apps Script (ראה SETUP-STORAGE.md)
 const GOOGLE_SCRIPT_URL = '';
+
+function isUpstashConfigured() {
+  return !!(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
+}
 
 function isSupabaseConfigured() {
   return !!(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.indexOf('supabase.co') > -1);
 }
 
 function isFormspreeConfigured() {
-  return !!(FORMSPREE_ID && FORMSPREE_ID.length > 5);
+  return !!(FORMSPREE_ID && FORMSPREE_ID.length > 5 && FORMSPREE_ID !== 'myzqabcd');
 }
 
 function isGoogleScriptConfigured() {
@@ -29,5 +36,10 @@ function isGoogleScriptConfigured() {
 }
 
 function hasAnyStorage() {
-  return isSupabaseConfigured() || isFormspreeConfigured() || isGoogleScriptConfigured();
+  return (
+    isUpstashConfigured() ||
+    isSupabaseConfigured() ||
+    isFormspreeConfigured() ||
+    isGoogleScriptConfigured()
+  );
 }
