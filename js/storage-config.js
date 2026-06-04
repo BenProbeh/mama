@@ -11,7 +11,7 @@ const SUPABASE_ANON_KEY = '';
 
 // אפשרות 2 – Formspree (מהיר: מקבל מייל על כל בחירה)
 // https://formspree.io → New Form → העתק את ה-ID מהכתובת f/xxxxxxxx
-const FORMSPREE_ID = '';
+const FORMSPREE_ID = 'myzqabcd';
 
 // אפשרות 3 – Google Apps Script (ראה SETUP-STORAGE.md)
 const GOOGLE_SCRIPT_URL = '';
