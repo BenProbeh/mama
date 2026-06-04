@@ -39,11 +39,14 @@
 
       try {
         await sendBookingToServer();
+        window.location.href = 'final.html';
       } catch (e) {
-        console.warn('שמירה לשרת נכשלה – ודא שהשרת רץ (npm start)', e);
+        alert(
+          'הבחירה לא נשמרה בשרת:\n' +
+          (e.message || e) +
+          '\n\nהגדר Supabase ב-Vercel – ראה SETUP-SUPABASE.md'
+        );
       }
-
-      window.location.href = 'final.html';
     });
   </script>
 </body>

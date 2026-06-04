@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "functions": {
+    "api/booking.js": {
+      "maxDuration": 10
+    },
+    "api/bookings.js": {
+      "maxDuration": 10
+    },
+    "api/health.js": {
+      "maxDuration": 10
+    }
+  }
+}

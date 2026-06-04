@@ -12,7 +12,8 @@
   <div class="page-wrap">
     <main class="card admin-table-wrap">
       <h1 class="main-title admin-title">מעקב אחרי הבחירות של קסניה</h1>
-      <p class="subtitle">כל מה שנשמר בשרת מופיע כאן</p>
+      <p class="subtitle">כל מה שנשמר בשרת מופיע כאן (לא הקובץ data במחשב)</p>
+      <p class="subtitle admin-hint" id="admin-hint" hidden></p>
 
       <table class="admin-table">
         <thead>
@@ -29,17 +30,50 @@
         </tbody>
       </table>
 
+      <p class="subtitle" id="storage-status">בודק חיבור לשרת...</p>
       <button type="button" class="confirm-btn refresh-btn" id="refresh-btn">רענון</button>
     </main>
   </div>
 
   <script src="js/back-button.js"></script>
   <script>
+    async function checkStorage() {
+      const el = document.getElementById('storage-status');
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        if (data.storage && data.storage.ok) {
+          el.textContent = 'שמירה בענן פעילה (' + data.storage.type + ') · ' + data.bookingsCount + ' הזמנות';
+          el.style.color = '#2e7d32';
+        } else {
+          el.textContent = (data.storage && data.storage.message) || 'אין שמירה – הגדר Supabase (SETUP-SUPABASE.md) ב-Vercel';
+          el.style.color = '#b42318';
+        }
+      } catch {
+        el.textContent = 'לא נמצא API – ודא שתיקיית api/ עלתה ל-Git ועשית Deploy';
+        el.style.color = '#b42318';
+      }
+    }
+
     async function loadBookings() {
       const tbody = document.getElementById('bookings-body');
+      const hint = document.getElementById('admin-hint');
+
+      await checkStorage();
+
       try {
         const res = await fetch('/api/bookings');
-        const list = await res.json();
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.bookings || []);
+
+        if (!res.ok || data.error) {
+          hint.hidden = false;
+          hint.textContent = data.error || data.storage?.message || 'שגיאה בטעינה – ראה DEPLOY-VERCEL.md';
+          tbody.innerHTML = '<tr><td colspan="5">אין גישה למסד נתונים</td></tr>';
+          return;
+        }
+
+        hint.hidden = true;
 
         if (!list.length) {
           tbody.innerHTML = '<tr><td colspan="5">עדיין אין הזמנות</td></tr>';
@@ -57,7 +91,9 @@
             '</tr>';
         }).join('');
       } catch {
-        tbody.innerHTML = '<tr><td colspan="5">הפעל את השרת: npm start</td></tr>';
+        hint.hidden = false;
+        hint.textContent = 'לא ניתן להתחבר ל-API. ודא שהפרויקט ב-Vercel כולל תיקיית api/ ו-Vercel KV.';
+        tbody.innerHTML = '<tr><td colspan="5">שגיאת חיבור</td></tr>';
       }
     }
 

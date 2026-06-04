@@ -40,6 +40,9 @@ async function sendBookingToServer() {
     })
   });
 
-  if (!response.ok) throw new Error('שגיאה בשמירה לשרת');
+  if (!response.ok) {
+    const err = await response.json().catch(function () { return {}; });
+    throw new Error(err.error || 'שגיאה בשמירה לשרת');
+  }
   return response.json();
 }
